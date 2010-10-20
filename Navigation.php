@@ -6,7 +6,7 @@
  * @author Jan Marek
  * @license MIT
  */
-class Navigation extends Control {
+class Navigation extends \Nette\Application\Control {
 
 	/** @var NavigationNode */
 	private $homepage;
@@ -16,6 +16,9 @@ class Navigation extends Control {
 
 	/** @var bool */
 	private $useHomepage = false;
+	
+	/** @var \Nette\ITranslator */
+	private $translator;
 
 
 	/**
@@ -28,6 +31,14 @@ class Navigation extends Control {
 		}
 		$node->isCurrent = true;
 		$this->current = $node;
+	}
+	
+	/**
+	 * Set translator
+	 * @param \Nette\ITranslator $translator
+	 */
+	public function setTranslator(\Nette\ITranslator $translator) {
+		$this->translator = $translator;
 	}
 
 
@@ -79,6 +90,10 @@ class Navigation extends Control {
 		$template->useHomepage = $this->useHomepage && $renderHomepage;
 		$template->renderChildren = $renderChildren;
 		$template->children = $this->getComponent("homepage")->getComponents();
+		if(isset($this->translator)) {
+			$template->setTranslator($this->translator);
+			$template->setFile(dirname(__FILE__) . "/menu_translator.phtml");
+		}
 		$template->render();
 	}
 
